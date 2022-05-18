@@ -1,0 +1,63 @@
+{{ define "layouts/footer.html" }}
+
+<script>
+    //import axios from "axios";
+    const { createApp } = Vue
+
+    createApp({
+        data() {
+            return {
+                message: 'Hello Vue!',
+                count: 0
+            }
+        },
+        methods: {
+            async wol(macaddr, ip, itemid) {
+                // `this` inside methods points to the current active instance
+                //alert(`Hello ${this.name}!`)
+                // `event` is the native DOM event
+                // if (event) {
+                //     alert(event.target.tagName)
+                // }
+                this.$refs[itemid].textContent = 'Loading...'
+                try {
+                    axios.post("/api/wol",{
+                        macaddr: macaddr,
+                        ip: ip
+                    }).then( res => {
+                        //appData.todolist = res.data.list
+                        //packet success
+                        console.log(res)
+                        this.$refs[itemid].textContent = res.data
+                        //Health check
+                        this.$refs[itemid].textContent += ', Checking...'
+                        axios.post("/api/ping",{
+                            macaddr: macaddr,
+                            ip: ip
+                        }).then( res => {
+                            //appData.todolist = res.data.list
+                            //packet success
+                            console.log(res)
+                            this.$refs[itemid].textContent = res.data
+
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+
+                    //const res = await fetch('https://yesno.wtf/api')
+                    //this.answer = (await res.json()).answer
+                } catch (error) {
+                    //this.answer = 'Error! Could not reach the API. ' + error
+                }
+            }
+        },
+        delimiters: ['${', '}']
+    }).mount('#app')
+</script>
+
+</html>
+
+{{ end }}
