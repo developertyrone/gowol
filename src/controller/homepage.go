@@ -25,7 +25,7 @@ func Router(r *gin.Engine) {
 
 func index(c *gin.Context) {
 
-	jsonFile, err := os.Open("config.json")
+	jsonFile, err := os.Open("config.local.json")
 	// if we os.Open returns an error then handle it
 	if err != nil {
 		fmt.Println(err)
@@ -85,7 +85,7 @@ func pingservice(c *gin.Context) {
 		log.Println(err)
 		c.String(http.StatusInternalServerError, err.Error())
 	}
-	log.Println(err)
+
 	if stats.PacketsRecv > 0 {
 		c.String(http.StatusOK, "Active")
 	} else {
@@ -139,6 +139,7 @@ func wakeCmd(macAddr string) error {
 
 func pingCmd(Ip string) (*ping.Statistics, error) {
 	pinger, err := ping.NewPinger(Ip)
+	pinger.SetPrivileged(true)
 	if err != nil {
 		return nil, err
 	}

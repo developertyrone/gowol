@@ -21,8 +21,10 @@ RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
 RUN mkdir -p /web
 WORKDIR /web
 COPY --from=builder /web/app .
+COPY --from=builder /web/static ./static
+COPY --from=builder /web/templates ./templates
 COPY --from=builder /web/config.json .
 
 EXPOSE 8080
 
-ENTRYPOINT ["./app"]
+ENTRYPOINT ["/web/app"]
